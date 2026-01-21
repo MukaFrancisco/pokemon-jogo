@@ -1,0 +1,622 @@
+/* RESET E CONFIGURAÇÕES GERAIS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #000;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Press Start 2P', cursive;
+    padding: 20px;
+}
+
+/* CONTAINER PRINCIPAL - TAMANHO PERFEITO */
+.ds-container {
+    width: 340px;
+    background: #F8BBD0;
+    border-radius: 35px;
+    padding: 20px 15px;
+    box-shadow: 
+        0 0 0 5px #F48FB1,
+        0 0 0 10px #FCE4EC,
+        0 40px 80px rgba(0, 0, 0, 0.9),
+        inset 0 5px 20px rgba(255, 255, 255, 0.4);
+    position: relative;
+    border: 3px solid #F06292;
+}
+
+/* TELAS - TAMANHO PROPORCIONAL */
+.screen {
+    background: #E0E0E0;
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: 
+        inset 0 0 15px rgba(0,0,0,0.6),
+        0 5px 15px rgba(0,0,0,0.5);
+}
+
+.top-screen {
+    height: 180px;
+    margin-bottom: 8px;
+}
+
+.bottom-screen {
+    height: 180px;
+    margin-top: 8px;
+}
+
+.screen-content {
+    width: 100%;
+    height: 100%;
+    background: #000;
+    border-radius: 8px;
+    border: 3px solid #333;
+    position: relative;
+    overflow: hidden;
+}
+
+/* DOBRADIÇA */
+.hinge {
+    width: 100%;
+    height: 18px;
+    background: linear-gradient(to bottom, #777, #555, #777);
+    border-radius: 10px;
+    margin: 10px 0;
+    box-shadow: 
+        inset 0 3px 8px rgba(0,0,0,0.7),
+        0 3px 8px rgba(0,0,0,0.4);
+}
+
+/* ÁREA DE CONTROLES - ORGANIZAÇÃO PERFEITA */
+.controls-area {
+    margin-top: 15px;
+    position: relative;
+    height: 160px;
+}
+
+/* BOTÕES L e R - POSIÇÃO CORRIGIDA */
+.lr-buttons {
+    position: absolute;
+    top: -25px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 35px;
+}
+
+.lr-btn {
+    width: 50px;
+    height: 25px;
+    background: linear-gradient(to bottom, #AAA, #888, #AAA);
+    border-radius: 12px 12px 6px 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    color: white;
+    font-weight: bold;
+    box-shadow: 
+        inset 0 -4px 8px rgba(0,0,0,0.6),
+        0 -3px 0 #666,
+        0 -6px 10px rgba(0,0,0,0.5);
+    cursor: pointer;
+    transition: all 0.1s;
+    user-select: none;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+    letter-spacing: 1px;
+}
+
+.lr-btn:active {
+    transform: translateY(3px);
+    box-shadow: 
+        inset 0 -2px 4px rgba(0,0,0,0.6),
+        0 -1px 0 #666;
+}
+
+/* D-PAD - TAMANHO E POSIÇÃO AJUSTADOS */
+.dpad-wrapper {
+    position: absolute;
+    left: 20px;
+    bottom: 35px;
+}
+
+.d-pad {
+    width: 95px;
+    height: 95px;
+    background: #666;
+    border-radius: 20px;
+    position: relative;
+    box-shadow: 
+        inset 0 0 15px rgba(0,0,0,0.8),
+        0 8px 0 #444,
+        0 12px 18px rgba(0,0,0,0.6);
+    cursor: pointer;
+}
+
+.dpad-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 35px;
+    height: 35px;
+    background: #333;
+    border-radius: 8px;
+    box-shadow: inset 0 0 12px rgba(0,0,0,0.8);
+}
+
+.dpad-direction {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    color: #DDD;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.1s;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+}
+
+.dpad-direction:active {
+    color: #FFF;
+    transform: scale(1.1);
+}
+
+.dpad-direction.up {
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.dpad-direction.down {
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.dpad-direction.left {
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.dpad-direction.right {
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* BOTÕES X/Y/A/B - ESCALA CORRETA */
+.abxy-wrapper {
+    position: absolute;
+    right: 20px;
+    bottom: 35px;
+}
+
+.abxy-diamond {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 12px;
+    width: 115px;
+    height: 115px;
+}
+
+.abxy-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: 
+        inset 0 -5px 10px rgba(0,0,0,0.5),
+        inset 0 5px 10px rgba(255,255,255,0.3),
+        0 8px 0 rgba(0,0,0,0.4),
+        0 12px 15px rgba(0,0,0,0.5);
+    transition: all 0.1s;
+    position: relative;
+    border: none;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.abxy-btn:active {
+    transform: translateY(5px);
+    box-shadow: 
+        inset 0 -2px 5px rgba(0,0,0,0.4),
+        inset 0 2px 5px rgba(255,255,255,0.2),
+        0 3px 0 rgba(0,0,0,0.4);
+}
+
+/* POSIÇÃO EM DIAMANTE */
+.y-btn {
+    background: linear-gradient(145deg, #FFEB3B, #FF9800);
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.x-btn {
+    background: linear-gradient(145deg, #FF5722, #D84315);
+    grid-column: 1;
+    grid-row: 2;
+}
+
+.a-btn {
+    background: linear-gradient(145deg, #00E676, #00C853);
+    grid-column: 3;
+    grid-row: 2;
+}
+
+.b-btn {
+    background: linear-gradient(145deg, #2196F3, #1565C0);
+    grid-column: 2;
+    grid-row: 3;
+}
+
+/* BOTÕES MENU, START, SELECT - TAMANHO E POSIÇÃO CORRETOS */
+.menu-buttons {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 25px;
+}
+
+.menu-btn {
+    width: 60px;
+    height: 18px;
+    background: linear-gradient(to bottom, #999, #777, #999);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 8px;
+    color: #EEE;
+    font-weight: bold;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: 
+        inset 0 0 8px rgba(0,0,0,0.7),
+        0 4px 0 #555,
+        0 8px 12px rgba(0,0,0,0.5);
+    transition: all 0.1s;
+    user-select: none;
+    text-transform: uppercase;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+}
+
+.menu-btn:active {
+    transform: translateY(3px);
+    box-shadow: 
+        inset 0 0 8px rgba(0,0,0,0.7),
+        0 1px 0 #555;
+}
+
+/* ESTILOS DAS TELAS - TEXTO MELHOR ORGANIZADO */
+.pixel-content {
+    font-family: 'Press Start 2P', cursive;
+    color: white;
+    text-align: center;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+
+.main-title {
+    font-size: 14px;
+    color: #FFD700;
+    margin-bottom: 10px;
+    text-shadow: 3px 3px 0 #000;
+    line-height: 1.4;
+}
+
+.sub-title {
+    font-size: 8px;
+    color: #BBB;
+    margin-bottom: 15px;
+    line-height: 1.5;
+    text-shadow: 1px 1px 0 #000;
+}
+
+.screen-label {
+    font-size: 12px;
+    color: #4FC3F7;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.continue-text {
+    font-size: 10px;
+    color: #FFB6C1;
+    margin-top: 25px;
+    animation: blink 1.5s infinite;
+    text-shadow: 1px 1px 0 #000;
+}
+
+.heart-animation {
+    font-size: 24px;
+    margin: 15px 0;
+    animation: float 3s ease-in-out infinite;
+}
+
+/* ANIMAÇÕES */
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+@keyframes pressEffect {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+}
+
+.button-press {
+    animation: pressEffect 0.2s ease;
+}
+
+/* ANIMAÇÃO DE INICIALIZAÇÃO */
+@keyframes dsStart {
+    0% { 
+        opacity: 0; 
+        transform: scale(0.9); 
+    }
+    100% { 
+        opacity: 1; 
+        transform: scale(1); 
+    }
+}
+
+.ds-container {
+    animation: dsStart 0.5s ease-out;
+}
+
+/* RESPONSIVO */
+@media (max-width: 400px) {
+    .ds-container {
+        width: 310px;
+        padding: 15px 12px;
+    }
+    
+    .top-screen, .bottom-screen {
+        height: 170px;
+    }
+    
+    .d-pad {
+        width: 85px;
+        height: 85px;
+    }
+    
+    .abxy-diamond {
+        width: 105px;
+        height: 105px;
+        gap: 10px;
+    }
+    
+    .abxy-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 12px;
+    }
+    
+    .menu-buttons {
+        gap: 20px;
+    }
+    
+    .menu-btn {
+        width: 55px;
+        height: 16px;
+        font-size: 7px;
+    }
+}/* BOTÕES X/Y/A/B - MAIS PRÓXIMOS E MENORES */
+.abxy-wrapper {
+    position: absolute;
+    right: 20px;
+    bottom: 35px;
+}
+
+.abxy-diamond {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 8px; /* REDUZIDO de 12px para 8px */
+    width: 105px; /* REDUZIDO de 115px */
+    height: 105px; /* REDUZIDO de 115px */
+}
+
+.abxy-btn {
+    width: 40px; /* REDUZIDO de 45px */
+    height: 40px; /* REDUZIDO de 45px */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 13px; /* REDUZIDO de 14px */
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: 
+        inset 0 -4px 8px rgba(0,0,0,0.5),
+        inset 0 4px 8px rgba(255,255,255,0.3),
+        0 6px 0 rgba(0,0,0,0.4),
+        0 10px 12px rgba(0,0,0,0.5);
+    transition: all 0.1s;
+    position: relative;
+    border: none;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.abxy-btn:active {
+    transform: translateY(4px); /* REDUZIDO de 5px */
+    box-shadow: 
+        inset 0 -2px 4px rgba(0,0,0,0.4),
+        inset 0 2px 4px rgba(255,255,255,0.2),
+        0 2px 0 rgba(0,0,0,0.4);
+}
+
+/* D-PAD - SETAS SEM MOVIMENTO */
+.dpad-direction {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    color: #DDD;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.1s;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+}
+
+/* REMOVER O :active QUE CAUSA MOVIMENTO DAS SETAS */
+.dpad-direction:active {
+    color: #FFF;
+    /* REMOVIDO: transform: scale(1.1); */
+    background: rgba(255, 255, 255, 0.1); /* Adicionado efeito sutil */
+}
+
+/* D-PAD - TAMANHO AJUSTADO */
+.d-pad {
+    width: 90px; /* REDUZIDO de 95px */
+    height: 90px; /* REDUZIDO de 95px */
+    background: #666;
+    border-radius: 20px;
+    position: relative;
+    box-shadow: 
+        inset 0 0 15px rgba(0,0,0,0.8),
+        0 8px 0 #444,
+        0 12px 18px rgba(0,0,0,0.6);
+    cursor: pointer;
+}
+
+.dpad-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 32px; /* REDUZIDO de 35px */
+    height: 32px; /* REDUZIDO de 35px */
+    background: #333;
+    border-radius: 8px;
+    box-shadow: inset 0 0 12px rgba(0,0,0,0.8);
+}
+
+/* AUMENTAR ESPAÇO ENTRE D-PAD E BOTÕES A/B/X/Y */
+.dpad-wrapper {
+    position: absolute;
+    left: 15px; /* AJUSTADO de 20px */
+    bottom: 35px;
+}
+
+.abxy-wrapper {
+    position: absolute;
+    right: 15px; /* AJUSTADO de 20px */
+    bottom: 35px;
+}
+
+/* BOTÕES MENU, START, SELECT - MAIS PRÓXIMOS */
+.menu-buttons {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px; /* REDUZIDO de 25px */
+}
+
+.menu-btn {
+    width: 55px; /* REDUZIDO de 60px */
+    height: 16px; /* REDUZIDO de 18px */
+    background: linear-gradient(to bottom, #999, #777, #999);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 7px; /* REDUZIDO de 8px */
+    color: #EEE;
+    font-weight: bold;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: 
+        inset 0 0 8px rgba(0,0,0,0.7),
+        0 4px 0 #555,
+        0 8px 12px rgba(0,0,0,0.5);
+    transition: all 0.1s;
+    user-select: none;
+    text-transform: uppercase;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+}
+
+.menu-btn:active {
+    transform: translateY(3px);
+    box-shadow: 
+        inset 0 0 8px rgba(0,0,0,0.7),
+        0 1px 0 #555;
+}
+
+/* RESPONSIVO - AJUSTADO */
+@media (max-width: 400px) {
+    .ds-container {
+        width: 310px;
+        padding: 15px 12px;
+    }
+    
+    .top-screen, .bottom-screen {
+        height: 170px;
+    }
+    
+    .d-pad {
+        width: 80px; /* AJUSTADO */
+        height: 80px; /* AJUSTADO */
+    }
+    
+    .abxy-diamond {
+        width: 95px; /* AJUSTADO */
+        height: 95px; /* AJUSTADO */
+        gap: 6px; /* AJUSTADO */
+    }
+    
+    .abxy-btn {
+        width: 35px; /* AJUSTADO */
+        height: 35px; /* AJUSTADO */
+        font-size: 11px; /* AJUSTADO */
+    }
+    
+    .menu-buttons {
+        gap: 15px; /* AJUSTADO */
+    }
+    
+    .menu-btn {
+        width: 50px; /* AJUSTADO */
+        height: 14px; /* AJUSTADO */
+        font-size: 6px; /* AJUSTADO */
+    }
+}

@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aventura Pokémon - Pedido Especial</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #000; min-height: 100vh; display: flex; justify-content: center; align-items: center; font-family: 'Press Start 2P', cursive; padding: 20px; }
+
+        .ds-container {
+            width: 340px;
+            background: #2E8B57;
+            border-radius: 35px;
+            padding: 20px 15px;
+            box-shadow: 0 0 0 5px #228B22, 0 0 0 10px #90EE90, 0 40px 80px rgba(0,0,0,0.9), inset 0 5px 20px rgba(255,255,255,0.3);
+            border: 3px solid #006400;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .screen { background: #E0E0E0; border-radius: 12px; padding: 8px; box-shadow: inset 0 0 15px rgba(0,0,0,0.6), 0 5px 15px rgba(0,0,0,0.5); }
+        .top-screen { height: 180px; margin-bottom: 8px; }
+        .bottom-screen { height: 180px; margin-top: 8px; }
+        .screen-content { width: 100%; height: 100%; background: #000; border-radius: 8px; border: 3px solid #333; position: relative; overflow: hidden; }
+
+        .hinge { width: 100%; height: 18px; background: linear-gradient(to bottom, #555, #333, #555); border-radius: 10px; margin: 10px 0; box-shadow: inset 0 3px 8px rgba(0,0,0,0.7), 0 3px 8px rgba(0,0,0,0.4); }
+
+        .controls-area { margin-top: 15px; position: relative; height: 170px; }
+
+        .lr-buttons { position: absolute; top: -25px; left: 0; right: 0; display: flex; justify-content: space-between; padding: 0 35px; }
+        .lr-btn {
+            width: 50px; height: 25px; background: linear-gradient(to bottom, #777, #555, #777);
+            border-radius: 12px 12px 6px 6px;
+            display: flex; justify-content: center; align-items: center; font-size: 12px; color: white; font-weight: bold;
+            box-shadow: inset 0 -4px 8px rgba(0,0,0,0.6), 0 -3px 0 #444, 0 -6px 10px rgba(0,0,0,0.5);
+            cursor: pointer; transition: all 0.1s; user-select: none; text-shadow: 1px 1px 2px rgba(0,0,0,0.7); letter-spacing: 1px;
+        }
+        .lr-btn:active { transform: translateY(4px); box-shadow: inset 0 -2px 4px rgba(0,0,0,0.6), 0 -1px 0 #444; }
+
+        .dpad-wrapper { position: absolute; left: 20px; bottom: 45px; }
+        .d-pad { width: 100px; height: 100px; background: #555; border-radius: 20px; position: relative; box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 8px 0 #333, 0 12px 18px rgba(0,0,0,0.6); }
+        .dpad-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 35px; height: 35px; background: #222; border-radius: 8px; box-shadow: inset 0 0 12px rgba(0,0,0,0.8); cursor: pointer; }
+        .dpad-center:active { background: #444; }
+
+        .dpad-arrow {
+            position: absolute; display: flex; justify-content: center; align-items: center; font-family: 'Press Start 2P', cursive;
+            font-size: 24px; color: #DDD; font-weight: bold; cursor: pointer; user-select: none; transition: all 0.1s;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.9); z-index: 2; background: rgba(0,0,0,0.3); border-radius: 6px; width: 35px; height: 35px;
+        }
+        .dpad-arrow:active { color: #FFF; background: rgba(255,255,255,0.2); transform: none !important; }
+
+        .arrow-up { top: 12px; left: 50%; transform: translateX(-50%); }
+        .arrow-down { bottom: 12px; left: 50%; transform: translateX(-50%); }
+        .arrow-left { left: 12px; top: 50%; transform: translateY(-50%); }
+        .arrow-right { right: 12px; top: 50%; transform: translateY(-50%); }
+
+        .abxy-wrapper { position: absolute; right: 20px; bottom: 45px; }
+        .abxy-diamond { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 2px; width: 95px; height: 95px; }
+        .abxy-btn {
+            width: 36px; height: 36px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 13px;
+            font-weight: bold; color: white; cursor: pointer; user-select: none; box-shadow: inset 0 -4px 8px rgba(0,0,0,0.5), inset 0 4px 8px rgba(255,255,255,0.3), 0 6px 0 rgba(0,0,0,0.4), 0 10px 12px rgba(0,0,0,0.5);
+            transition: all 0.1s; border: none; font-family: 'Press Start 2P', cursive;
+        }
+        .abxy-btn:active { transform: translateY(6px); box-shadow: inset 0 -2px 4px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.2), 0 2px 0 rgba(0,0,0,0.4); }
+
+        .y-btn { background: linear-gradient(145deg, #FFEB3B, #FF9800); grid-column: 2; grid-row: 1; }
+        .x-btn { background: linear-gradient(145deg, #FF5722, #D84315); grid-column: 1; grid-row: 2; }
+        .a-btn { background: linear-gradient(145deg, #00E676, #00C853); grid-column: 3; grid-row: 2; }
+        .b-btn { background: linear-gradient(145deg, #2196F3, #1565C0); grid-column: 2; grid-row: 3; }
+
+        .menu-buttons { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; }
+        .menu-btn {
+            width: 55px; height: 18px; background: linear-gradient(to bottom, #777, #555, #777); border-radius: 10px;
+            display: flex; justify-content: center; align-items: center; font-size: 7px; color: #EEE; font-weight: bold; letter-spacing: 1px;
+            cursor: pointer; box-shadow: inset 0 0 8px rgba(0,0,0,0.7), 0 4px 0 #333, 0 8px 12px rgba(0,0,0,0.5);
+            transition: all 0.1s; user-select: none; text-transform: uppercase; text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+        }
+        .menu-btn:active { transform: translateY(4px); box-shadow: inset 0 0 8px rgba(0,0,0,0.7), 0 1px 0 #333; }
+
+        .pixel-content { 
+            font-family: 'Press Start 2P', cursive; 
+            color: white; 
+            text-align: center; 
+            height: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 10px;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        /* ============ TELA INICIAL ============ */
+        .game-title {
+            font-size: 11px;
+            color: #FFD700;
+            margin-bottom: 6px;
+            text-shadow: 2px 2px 0 #000;
+            line-height: 1.3;
+            padding: 0 6px;
+        }
+
+        .game-subtitle {
+            font-size: 7px;
+            color: #4FC3F7;
+            margin-bottom: 10px;
+            line-height: 1.3;
+            text-shadow: 1px 1px 0 #000;
+            padding: 0 6px;
+        }
+
+        .love-container {
+            position: relative;
+            width: 70px;
+            height: 70px;
+            margin: 8px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .big-heart {
+            font-size: 32px;
+            color: #FF4081;
+            position: absolute;
+            z-index: 2;
+            animation: heartBeat 1.5s ease-in-out infinite;
+            text-shadow: 0 0 10px #FF4081;
+        }
+
+        .ring {
+            font-size: 22px;
+            color: #FFD700;
+            position: absolute;
+            animation: orbit 3s linear infinite;
+        }
+
+        .ring-1 { animation-delay: 0s; }
+        .ring-2 { animation-delay: -1.5s; }
+
+        .adventure-text {
+            font-size: 7px;
+            color: #FFF;
+            line-height: 1.4;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 0 #000;
+            padding: 0 10px;
+            max-height: 70px;
+            overflow: hidden;
+        }
+
+        .highlight {
+            color: #FFD700;
+            font-size: 7px;
+        }
+
+        .press-start {
+            font-size: 8px;
+            color: #00E676;
+            margin-top: 10px;
+            animation: blink 1.5s infinite;
+            text-shadow: 1px 1px 0 #000;
+            padding: 4px 8px;
+            border: 1px solid #00E676;
+            border-radius: 3px;
+            background: rgba(0, 230, 118, 0.1);
+        }
+
+        /* ============ ESTILOS PARA AS IMAGENS - FUNDO TRANSPARENTE ============ */
+        .professor-image-container {
+            width: 80px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .professor-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            background: transparent !important; /* FUNDO TRANSPARENTE */
+        }
+
+        .professor-label {
+            font-size: 9px;
+            color: #FFD700;
+            text-align: center;
+            margin-top: 5px;
+            text-shadow: 1px 1px 0 #000;
+        }
+
+        .pokeball-image-container {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 4px;
+            background: transparent !important; /* FUNDO TRANSPARENTE */
+        }
+
+        .pokeball-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s;
+            background: transparent !important; /* FUNDO TRANSPARENTE */
+        }
+
+        .pokeball-image:hover {
+            transform: scale(1.1);
+        }
+
+        .pokemon-name {
+            font-size: 6px;
+            color: #FFD700;
+            line-height: 1.2;
+            padding: 0 2px;
+            margin-top: 3px;
+        }
+
+        .pokemon-confirmation-image-container {
+            width: 70px;
+            height: 70px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 8px 0;
+            background: transparent !important; /* FUNDO TRANSPARENTE */
+        }
+
+        .pokemon-confirmation-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            animation: heartBeat 1.5s infinite;
+            background: transparent !important; /* FUNDO TRANSPARENTE */
+        }
+
+        /* ============ SISTEMA DE DIÁLOGO ============ */
+        .dialogue-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 6px;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        .dialogue-box {
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid #000;
+            border-radius: 5px;
+            padding: 8px;
+            flex-grow: 1;
+            position: relative;
+            max-height: 135px;
+            overflow: hidden;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .speaker-name {
+            font-size: 8px;
+            color: #8B4513;
+            margin-bottom: 4px;
+            text-align: left;
+            font-weight: bold;
+            text-shadow: 1px 1px 0 #FFF;
+            flex-shrink: 0;
+        }
+
+        .dialogue-text {
+            font-size: 7px;
+            color: #000;
+            line-height: 1.4;
+            text-align: left;
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-right: 4px;
+            min-height: 50px;
+            max-height: 75px;
+            margin: 0;
+        }
+
+        .dialogue-text::-webkit-scrollbar {
+            width: 3px;
+        }
+        
+        .dialogue-text::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+            border-radius: 2px;
+        }
+        
+        .dialogue-text::-webkit-scrollbar-thumb {
+            background: #8B4513;
+            border-radius: 2px;
+        }
+
+        .continue-indicator {
+            position: absolute;
+            bottom: 3px;
+            right: 6px;
+            font-size: 7px;
+            color: #006400;
+            animation: blink 1s infinite;
+        }
+
+        /* ============ TELA DE ESCOLHA DE POKÉMON ============ */
+        .pokemon-selection-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 8px;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        .pokemon-title {
+            font-size: 9px;
+            color: #FFD700;
+            margin-bottom: 6px;
+            text-shadow: 2px 2px 0 #000;
+            line-height: 1.2;
+            padding: 0 5px;
+            flex-shrink: 0;
+        }
+
+        .pokeball-row {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            width: 100%;
+            margin: 8px 0;
+            gap: 5px;
+            flex-grow: 1;
+        }
+
+        .pokeball-option {
+            text-align: center;
+            cursor: pointer;
+            flex: 1;
+            padding: 3px;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: transparent !important; /* FUNDO TRANSPARENTE */
+        }
+
+        .choice-instruction {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #000;
+            border-radius: 3px;
+            padding: 6px;
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+
+        .instruction-text {
+            font-size: 6px;
+            color: #000;
+            line-height: 1.2;
+        }
+
+        .instruction-hint {
+            font-size: 5px;
+            color: #666;
+            text-align: right;
+            margin-top: 3px;
+        }
+
+        /* ============ TELA DE CONFIRMAÇÃO ============ */
+        .confirmation-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            box-sizing: border-box;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .confirmation-title {
+            font-size: 9px;
+            color: #00E676;
+            margin-bottom: 6px;
+            line-height: 1.2;
+            flex-shrink: 0;
+        }
+
+        .confirmation-text {
+            font-size: 7px;
+            color: #FFF;
+            line-height: 1.3;
+            padding: 0 8px;
+            margin-bottom: 5px;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .next-hint {
+            font-size: 6px;
+            color: #4FC3F7;
+            margin-top: 8px;
+            flex-shrink: 0;
+        }
+
+        /* ============ TELA DE PROPOSTA ============ */
+        .proposal-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 6px;
+            box-sizing: border-box;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .proposal-title {
+            font-size: 10px;
+            color: #FF4081;
+            margin-bottom: 6px;
+            text-shadow: 2px 2px 0 #000;
+            line-height: 1.2;
+            padding: 0 5px;
+            flex-shrink: 0;
+        }
+
+        .proposal-emoji {
+            font-size: 28px;
+            color: #FFD700;
+            margin: 6px 0;
+            animation: float 2s infinite;
+            flex-shrink: 0;
+        }
+
+        .proposal-text {
+            font-size: 7px;
+            color: #FFF;
+            line-height: 1.3;
+            margin: 6px 0;
+            padding: 0 8px;
+            text-align: center;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-height: 45px;
+            overflow: hidden;
+        }
+
+        .proposal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+            flex-shrink: 0;
+        }
+
+        .accept-btn {
+            font-size: 8px;
+            padding: 6px 10px;
+            border: 2px solid #00E676;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #00E676;
+            background: rgba(0, 230, 118, 0.15);
+            animation: pulse 2s infinite;
+            white-space: nowrap;
+            min-width: 70px;
+            text-align: center;
+        }
+
+        .accept-btn:hover {
+            background: rgba(0, 230, 118, 0.3);
+            transform: scale(1.05);
+        }
+
+        .accept-btn:active {
+            transform: scale(0.95);
+        }
+
+        .decline-btn {
+            font-size: 8px;
+            padding: 6px 10px;
+            border: 2px solid #FF4444;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #FF4444;
+            background: rgba(255, 68, 68, 0.15);
+            white-space: nowrap;
+            min-width: 70px;
+            text-align: center;
+        }
+
+        .decline-btn:hover {
+            background: rgba(255, 68, 68, 0.3);
+        }
+
+        .decline-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* ============ TELA DE "OPÇÃO NÃO PROGRAMADA" ============ */
+        .not-programmed-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            box-sizing: border-box;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .not-programmed-emoji {
+            font-size: 36px;
+            margin-bottom: 8px;
+            animation: shake 0.5s ease-in-out;
+            flex-shrink: 0;
+        }
+
+        .not-programmed-title {
+            font-size: 9px;
+            color: #FF9800;
+            margin-bottom: 8px;
+            flex-shrink: 0;
+        }
+
+        .not-programmed-text {
+            font-size: 7px;
+            color: #FFF;
+            line-height: 1.3;
+            padding: 0 8px;
+            margin-bottom: 12px;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-btn {
+            font-size: 8px;
+            padding: 7px 14px;
+            border: 2px solid #4FC3F7;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #4FC3F7;
+            background: rgba(79, 195, 247, 0.15);
+            animation: blink 1.5s infinite;
+            flex-shrink: 0;
+        }
+
+        .back-btn:hover {
+            background: rgba(79, 195, 247, 0.3);
+        }
+
+        /* ============ TELA FINAL ============ */
+        .final-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            box-sizing: border-box;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .final-emoji {
+            font-size: 36px;
+            margin-bottom: 8px;
+            animation: heartBeat 1.5s infinite;
+            flex-shrink: 0;
+        }
+
+        .final-title {
+            font-size: 11px;
+            color: #FFD700;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 0 #000;
+            flex-shrink: 0;
+        }
+
+        .final-text {
+            font-size: 8px;
+            color: #FFF;
+            line-height: 1.3;
+            padding: 0 8px;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ============ ANIMAÇÕES ============ */
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.4); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(0, 230, 118, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 230, 118, 0); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes orbit {
+            0% { transform: rotate(0deg) translateX(25px) rotate(0deg) scale(1); opacity: 0.9; }
+            25% { transform: rotate(90deg) translateX(25px) rotate(-90deg) scale(1.1); opacity: 1; }
+            50% { transform: rotate(180deg) translateX(25px) rotate(-180deg) scale(1); opacity: 0.9; }
+            75% { transform: rotate(270deg) translateX(25px) rotate(-270deg) scale(1.1); opacity: 1; }
+            100% { transform: rotate(360deg) translateX(25px) rotate(-360deg) scale(1); opacity: 0.9; }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        @keyframes pressEffect { 
+            0% { transform: scale(1); } 
+            50% { transform: scale(0.9); } 
+            100% { transform: scale(1); } 
+        }
+        
+        .button-press { animation: pressEffect 0.2s ease; }
+
+        @keyframes dsStart { 
+            0% { opacity: 0; transform: scale(0.9); } 
+            100% { opacity: 1; transform: scale(1); } 
+        }
+        
+        .ds-container { animation: dsStart 0.8s ease-out; }
+
+        /* ============ RESPONSIVIDADE ============ */
+        @media (max-width: 400px) {
+            .ds-container { 
+                width: 310px; 
+                padding: 15px 12px; 
+            }
+            
+            .top-screen, .bottom-screen { 
+                height: 170px; 
+            }
+            
+            .d-pad { 
+                width: 90px; 
+                height: 90px; 
+            }
+            
+            .abxy-diamond { 
+                width: 85px; 
+                height: 85px; 
+                gap: 1px; 
+            }
+            
+            .abxy-btn { 
+                width: 32px; 
+                height: 32px; 
+                font-size: 11px; 
+            }
+            
+            .menu-buttons { 
+                gap: 18px; 
+                bottom: 8px; 
+            }
+            
+            .menu-btn { 
+                width: 50px; 
+                height: 16px; 
+                font-size: 6px; 
+            }
+            
+            .dpad-arrow { 
+                font-size: 20px; 
+                width: 30px; 
+                height: 30px; 
+            }
+            
+            .proposal-title { font-size: 9px; }
+            .proposal-text { font-size: 6px; }
+            .proposal-buttons { gap: 8px; }
+            .accept-btn, .decline-btn { 
+                font-size: 7px; 
+                padding: 5px 8px;
+                min-width: 60px;
+            }
+            
+            .game-title { font-size: 10px; }
+            .game-subtitle { font-size: 6px; }
+            .adventure-text { font-size: 6px; }
+            .press-start { font-size: 7px; }
+            .love-container { width: 60px; height: 60px; }
+            .big-heart { font-size: 28px; }
+            .ring { font-size: 18px; }
+            
+            .dialogue-text { font-size: 6px; }
+            .speaker-name { font-size: 7px; }
+            .continue-indicator { font-size: 6px; }
+            
+            .pokemon-title { font-size: 8px; }
+            .pokeball-image-container { width: 40px; height: 40px; }
+            .pokemon-confirmation-image-container { width: 60px; height: 60px; }
+            .pokemon-name { font-size: 5px; }
+            
+            .final-title { font-size: 10px; }
+            .final-text { font-size: 7px; }
+            
+            .not-programmed-title { font-size: 8px; }
+            .not-programmed-text { font-size: 6px; }
+            .back-btn { font-size: 7px; padding: 5px 10px; }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="ds-container">
+        <div class="screen top-screen">
+            <div class="screen-content" id="topScreen"></div>
+        </div>
+        
+        <div class="hinge"></div>
+        
+        <div class="screen bottom-screen">
+            <div class="screen-content" id="bottomScreen"></div>
+        </div>
+        
+        <div class="controls-area">
+            <div class="lr-buttons">
+                <div class="lr-btn l-btn">L</div>
+                <div class="lr-btn r-btn">R</div>
+            </div>
+            
+            <div class="dpad-wrapper">
+                <div class="d-pad">
+                    <div class="dpad-center"></div>
+                    <div class="dpad-arrow arrow-up" data-direction="up">↑</div>
+                    <div class="dpad-arrow arrow-down" data-direction="down">↓</div>
+                    <div class="dpad-arrow arrow-left" data-direction="left">←</div>
+                    <div class="dpad-arrow arrow-right" data-direction="right">→</div>
+                </div>
+            </div>
+            
+            <div class="abxy-wrapper">
+                <div class="abxy-diamond">
+                    <div class="abxy-btn y-btn" data-button="Y">Y</div>
+                    <div class="abxy-btn x-btn" data-button="X">X</div>
+                    <div class="abxy-btn a-btn" data-button="A">A</div>
+                    <div class="abxy-btn b-btn" data-button="B">B</div>
+                </div>
+            </div>
+            
+            <div class="menu-buttons">
+                <div class="menu-btn menu" data-button="MENU">MENU</div>
+                <div class="menu-btn start" data-button="START">START</div>
+                <div class="menu-btn select" data-button="SELECT">SELECT</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎮 Aventura Pokémon - Pedido Especial');
+            
+            // ============ VARIÁVEIS GLOBAIS ============
+            let currentDialogueIndex = 0;
+            let gameState = 'initial';
+            let selectedPokemon = '';
+            let musicEnabled = true;
+            
+            // ============ AQUI VOCÊ COLOCA OS NOMES DAS SUAS IMAGENS PNG ============
+            // COLOCA OS NOMES EXATOS DOS SEUS ARQUIVOS AQUI!
+            const imagePaths = {
+                professor: 'imagen/professor.png',                // SUA IMAGEM DO PROFESSOR
+                pokeballCharmander: 'imagen/pokeboll.png',  // POKÉBOLA CHARMANDER
+                pokeballSquirtle: 'imagen/pokeboll.png',      // POKÉBOLA SQUIRTLE
+                pokeballBulbasaur: 'imagen/pokeboll.png',    // POKÉBOLA BULBASAUR
+                charmander: 'imagen/charmander.png',             // POKÉMON CHARMANDER
+                squirtle: 'imagen/squirtle.png',                 // POKÉMON SQUIRTLE
+                bulbasaur: 'imagen/Bulbasaur.png'                // POKÉMON BULBASAUR
+            };
+            
+            // Sistema de diálogo do Professor Carvalho
+            const professorDialogues = [
+                "Olá, jovem treinador! Bem-vindo ao mundo Pokémon!",
+                "Meu nome é Carvalho. Sou um pesquisador de Pokémon.",
+                "Os Pokémon são criaturas fascinantes que vivem conosco.",
+                "Alguns são amigos, outros nos ajudam no trabalho...",
+                "E alguns até batalham! É assim que nos tornamos...",
+                "TREINADORES POKÉMON!",
+                "Agora, faça uma escolha muito importante...",
+                "Esta decisão definirá sua jornada como treinador.",
+                "Escolha com sabedoria seu parceiro Pokémon!",
+                "Pronto para começar sua aventura?"
+            ];
+            
+            // ============ SISTEMA DE ÁUDIO - MÚSICA RÁPIDA ============
+            let audioContext;
+            let audioInitialized = false;
+            let soundsEnabled = false;
+            
+            const pokemonMelody = [
+                [659, 0.12], [659, 0.12], [659, 0.12], [523, 0.12],
+                [659, 0.12], [784, 0.25], [392, 0.25],
+                [523, 0.25], [392, 0.25], [330, 0.25],
+                [440, 0.12], [494, 0.12], [466, 0.12],
+                [440, 0.12], [392, 0.12], [659, 0.12],
+                [784, 0.12], [880, 0.25], [698, 0.12],
+                [784, 0.12], [659, 0.12], [523, 0.12],
+                [587, 0.12], [494, 0.25]
+            ];
+            
+            function initAudio() {
+                if (audioInitialized) return true;
+                try {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    audioInitialized = true;
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+            }
+            
+            function playSound(type) {
+                if (!soundsEnabled) return;
+                if (!audioInitialized) {
+                    if (!initAudio()) return;
+                }
+                
+                try {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    const sounds = {
+                        'start': { freq: 800, type: 'sine', duration: 0.15 },
+                        'button': { freq: 600, type: 'square', duration: 0.08 },
+                        'select': { freq: 400, type: 'triangle', duration: 0.12 },
+                        'dialogue': { freq: 300, type: 'sawtooth', duration: 0.04 },
+                        'confirm': { freq: 1000, type: 'sine', duration: 0.08 },
+                        'error': { freq: 200, type: 'sawtooth', duration: 0.25 }
+                    };
+                    
+                    const sound = sounds[type] || sounds['button'];
+                    oscillator.frequency.value = sound.freq;
+                    oscillator.type = sound.type;
+                    
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + sound.duration);
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + sound.duration);
+                } catch (e) {}
+            }
+            
+            function playPokemonVictoryMusic() {
+                if (!musicEnabled) return;
+                if (!audioInitialized) {
+                    if (!initAudio()) return;
+                }
+                
+                try {
+                    const masterGain = audioContext.createGain();
+                    masterGain.gain.value = 0.3;
+                    masterGain.connect(audioContext.destination);
+                    
+                    pokemonMelody.forEach(([freq, duration], index) => {
+                        setTimeout(() => {
+                            const oscillator = audioContext.createOscillator();
+                            const gainNode = audioContext.createGain();
+                            
+                            oscillator.connect(gainNode);
+                            gainNode.connect(masterGain);
+                            
+                            oscillator.frequency.value = freq;
+                            oscillator.type = 'triangle';
+                            
+                            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+                            
+                            oscillator.start(audioContext.currentTime);
+                            oscillator.stop(audioContext.currentTime + duration);
+                            
+                            if (index === pokemonMelody.length - 1) {
+                                setTimeout(() => {
+                                    playFinalChord();
+                                }, duration * 1000 + 50);
+                            }
+                        }, index * 150);
+                    });
+                    
+                } catch (e) {
+                    console.log('Erro ao tocar música:', e);
+                }
+            }
+            
+            function playFinalChord() {
+                const chordNotes = [392, 494, 587, 698];
+                
+                chordNotes.forEach((freq, index) => {
+                    setTimeout(() => {
+                        const oscillator = audioContext.createOscillator();
+                        const gainNode = audioContext.createGain();
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        
+                        oscillator.frequency.value = freq;
+                        oscillator.type = 'sine';
+                        
+                        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1.2);
+                        
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 1.2);
+                    }, index * 40);
+                });
+            }
+            
+            // ============ TELA INICIAL ============
+            document.getElementById('topScreen').innerHTML = `
+                <div class="pixel-content">
+                    <div class="game-title">A AVENTURA POKÉMON</div>
+                    <div class="game-subtitle">●●● PEDIDO ESPECIAL ●●●</div>
+                    
+                    <div class="love-container">
+                        <div class="big-heart">❤️</div>
+                        <div class="ring ring-1">💍</div>
+                        <div class="ring ring-2">💍</div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('bottomScreen').innerHTML = `
+                <div class="pixel-content">
+                    <div class="adventure-text">
+                        Uma <span class="highlight">jornada emocionante</span> está prestes a começar!<br><br>
+                        O <span class="highlight">maior tesouro</span> não é uma conquista,<br>
+                        mas um <span class="highlight">coração para compartilhar</span>.
+                    </div>
+                    <div class="press-start">▼ PRESS START ▼</div>
+                </div>
+            `;
+            
+            // ============ PROFESSOR CARVALHO COM IMAGEM ============
+            function showProfessorCarvalho() {
+                gameState = 'professor';
+                currentDialogueIndex = 0;
+                
+                document.getElementById('topScreen').innerHTML = `
+                    <div class="pixel-content">
+                        <div class="professor-image-container">
+                            <img src="${imagePaths.professor}" class="professor-image" alt="Professor Carvalho">
+                        </div>
+                        <div class="professor-label">PROF. CARVALHO</div>
+                    </div>
+                `;
+                
+                showNextDialogue();
+                setupDialogueControls();
+            }
+            
+            function showNextDialogue() {
+                if (currentDialogueIndex >= professorDialogues.length) {
+                    showPokemonSelection();
+                    return;
+                }
+                
+                const dialogue = professorDialogues[currentDialogueIndex];
+                
+                document.getElementById('bottomScreen').innerHTML = `
+                    <div class="dialogue-container">
+                        <div class="dialogue-box">
+                            <div class="speaker-name">PROF. CARVALHO</div>
+                            <div class="dialogue-text">${dialogue}</div>
+                            <div class="continue-indicator">▼ PRESS A ▼</div>
+                        </div>
+                    </div>
+                `;
+                
+                playSound('dialogue');
+                currentDialogueIndex++;
+            }
+            
+            function setupDialogueControls() {
+                const aButton = document.querySelector('.a-btn');
+                
+                const newAButton = aButton.cloneNode(true);
+                aButton.parentNode.replaceChild(newAButton, aButton);
+                
+                newAButton.addEventListener('click', function() {
+                    if (gameState === 'professor') {
+                        playSound('confirm');
+                        this.classList.add('button-press');
+                        showNextDialogue();
+                        
+                        setTimeout(() => {
+                            this.classList.remove('button-press');
+                        }, 200);
+                    }
+                });
+            }
+            
+            // ============ TELA DE ESCOLHA DE POKÉMON COM IMAGENS DAS POKÉBOLAS ============
+            function showPokemonSelection() {
+                gameState = 'pokemon';
+                
+                document.getElementById('topScreen').innerHTML = `
+                    <div class="pixel-content">
+                        <div style="font-size: 24px; color: #FFD700; margin-bottom: 8px;">⚭</div>
+                        <div style="font-size: 8px; color: #FFF;">ESCOLHA SEU POKÉMON</div>
+                    </div>
+                `;
+                
+                document.getElementById('bottomScreen').innerHTML = `
+                    <div class="pokemon-selection-container">
+                        <div class="pokemon-title">ESCOLHA SEU POKÉMON INICIAL</div>
+                        
+                        <div class="pokeball-row">
+                            <div class="pokeball-option" data-pokemon="Charmander">
+                                <div class="pokeball-image-container">
+                                    <img src="${imagePaths.pokeballCharmander}" class="pokeball-image" alt="Pokébola Charmander">
+                                </div>
+                                <div class="pokemon-name">CHARMANDER</div>
+                            </div>
+                            
+                            <div class="pokeball-option" data-pokemon="Squirtle">
+                                <div class="pokeball-image-container">
+                                    <img src="${imagePaths.pokeballSquirtle}" class="pokeball-image" alt="Pokébola Squirtle">
+                                </div>
+                                <div class="pokemon-name">SQUIRTLE</div>
+                            </div>
+                            
+                            <div class="pokeball-option" data-pokemon="Bulbasaur">
+                                <div class="pokeball-image-container">
+                                    <img src="${imagePaths.pokeballBulbasaur}" class="pokeball-image" alt="Pokébola Bulbasaur">
+                                </div>
+                                <div class="pokemon-name">BULBASAUR</div>
+                            </div>
+                        </div>
+                        
+                        <div class="choice-instruction">
+                            <div class="instruction-text">Professor Carvalho: Escolha com sabedoria!</div>
+                            <div class="instruction-hint">▼ CLIQUE NA POKÉBOLA ▼</div>
+                        </div>
+                    </div>
+                `;
+                
+                document.querySelectorAll('.pokeball-option').forEach(pokeball => {
+                    pokeball.addEventListener('click', function() {
+                        const pokemon = this.dataset.pokemon;
+                        selectedPokemon = pokemon;
+                        
+                        playSound('confirm');
+                        
+                        this.style.transform = 'scale(1.1)';
+                        this.style.filter = 'brightness(1.3)';
+                        
+                        showPokemonConfirmation(pokemon);
+                        
+                        setTimeout(() => {
+                            this.style.transform = '';
+                            this.style.filter = '';
+                        }, 300);
+                    });
+                });
+            }
+            
+            // ============ CONFIRMAÇÃO COM IMAGEM DO POKÉMON ============
+            function showPokemonConfirmation(pokemon) {
+                const imagePath = {
+                    'Charmander': imagePaths.charmander,
+                    'Squirtle': imagePaths.squirtle,
+                    'Bulbasaur': imagePaths.bulbasaur
+                }[pokemon];
+                
+                document.getElementById('topScreen').innerHTML = `
+                    <div class="pixel-content">
+                        <div class="pokemon-confirmation-image-container">
+                            <img src="${imagePath}" class="pokemon-confirmation-image" alt="${pokemon}">
+                        </div>
+                        <div style="font-size: 8px; color: #FFD700;">PARABÉNS!</div>
+                    </div>
+                `;
+                
+                document.getElementById('bottomScreen').innerHTML = `
+                    <div class="confirmation-container">
+                        <div class="confirmation-title">ESCOLHA CONFIRMADA!</div>
+                        <div class="pokemon-confirmation-image-container">
+                            <img src="${imagePath}" class="pokemon-confirmation-image" alt="${pokemon}">
+                        </div>
+                        <div class="confirmation-text">
+                            Você escolheu<br>
+                            <span style="color: #FFD700;">${pokemon}</span>!
+                        </div>
+                        <div class="next-hint">Pressione START para continuar</div>
+                    </div>
+                `;
+                
+                gameState = 'proposal-ready';
+            }
+            
+            // ============ TELA DE PROPOSTA ============
+            function showRingProposal() {
+                gameState = 'proposal';
+                
+                document.getElementById('topScreen').innerHTML = `
+                    <div class="pixel-content">
+                        <div class="proposal-emoji">💍</div>
+                        <div style="font-size: 8px; color: #FFF;">Para você...</div>
+                    </div>
+                `;
+                
+                document.getElementById('bottomScreen').innerHTML = `
+                    <div class="proposal-container">
+                        <div class="proposal-title">QUER NAMORAR COMIGO?</div>
+                        <div class="proposal-emoji">💖</div>
+                        <div class="proposal-text">
+                            Esta jornada Pokémon pode ser incrível<br>
+                            se continuarmos juntos...<br>
+                            O que você acha?
+                        </div>
+                        <div class="proposal-buttons" id="proposalButtons">
+                            <div class="accept-btn" id="acceptBtn">SIM, CLARO!</div>
+                            <div class="decline-btn" id="declineBtn">MELHOR NÃO</div>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('acceptBtn').addEventListener('click', function() {
+                    playPokemonVictoryMusic();
+                    showFinalScene(true);
+                });
+                
+                document.getElementById('declineBtn').addEventListener('click', function() {
+                    playSound('error');
+                    showNotProgrammedScreen();
+                });
+            }
+            
+            // ============ TELA "OPÇÃO NÃO PROGRAMADA" ============
+            function showNotProgrammedScreen() {
+                gameState = 'not-programmed';
+                
+                document.getElementById('topScreen').innerHTML = `
+                    <div class="pixel-content">
+                        <div class="not-programmed-emoji">😅</div>
+                        <div style="font-size: 8px; color: #FF9800;">OPS!</div>
+                    </div>
+                `;
+                
+                document.getElementById('bottomScreen').innerHTML = `
+                    <div class="not-programmed-container">
+                        <div class="not-programmed-title">OPÇÃO NÃO PROGRAMADA</div>
+                        <div class="not-programmed-text">
+                            Essa opção ainda não foi programada, hehehe!<br><br>
+                            Só o botão "SIM, CELSO!" funciona.<br>
+                            Vamos voltar?
+                        </div>
+                        <div class="back-btn" id="backBtn">VOLTAR PARA PROPOSTA</div>
+                    </div>
+                `;
+                
+                document.getElementById('backBtn').addEventListener('click', function() {
+                    playSound('confirm');
+                    this.classList.add('button-press');
+                    
+                    setTimeout(() => {
+                        this.classList.remove('button-press');
+                        showProposalWithoutDecline();
+                    }, 200);
+                });
+            }
+            
+            // ============ TELA DE PROPOSTA SEM BOTÃO NÃO ============
+            function showProposalWithoutDecline() {
+                gameState = 'proposal-only-yes';
+                
+                document.getElementById('topScreen').innerHTML = `
+                    <div class="pixel-content">
+                        <div class="proposal-emoji">💍</div>
+                        <div style="font-size: 8px; color: #FFF;">Para você...</div>
+                    </div>
+                `;
+                
+                document.getElementById('bottomScreen').innerHTML = `
+                    <div class="proposal-container">
+                        <div class="proposal-title">QUER NAMORAR COMIGO?</div>
+                        <div class="proposal-emoji">💖</div>
+                        <div class="proposal-text">
+                            Essa opção não está disponível ainda!<br><br>
+                            Mas a opção "SIM, CELSO!"<br>
+                            funciona perfeitamente! 😉
+                        </div>
+                        <div class="proposal-buttons">
+                            <div class="accept-btn" id="acceptBtnOnly">SIM, CELSO!</div>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('acceptBtnOnly').addEventListener('click', function() {
+                    playPokemonVictoryMusic();
+                    showFinalScene(true);
+                });
+            }
+            
+            // ============ TELA FINAL ============
+            function showFinalScene(accepted) {
+                gameState = 'final';
+                
+                if (accepted) {
+                    document.getElementById('topScreen').innerHTML = `
+                        <div class="pixel-content">
+                            <div class="final-emoji" style="color: #FF4081;">❤️</div>
+                            <div class="final-title">ACEITO! 💖</div>
+                        </div>
+                    `;
+                    
+                    document.getElementById('bottomScreen').innerHTML = `
+                        <div class="final-container">
+                            <div style="font-size: 9px; color: #00E676; margin-bottom: 8px; text-shadow: 1px 1px 0 #000;">PARABÉNS! 🎉</div>
+                            <div class="final-text">
+                                Começamos uma nova<br>
+                                aventura Pokémon juntos!<br><br>
+                                Que seja repleta de<br>
+                                emoções e vitórias! ❤️
+                            </div>
+                            <div style="font-size: 6px; color: #4FC3F7; margin-top: 10px;">♪ Música Pokémon tocando! ♪</div>
+                        </div>
+                    `;
+                    
+                    createConfetti();
+                } else {
+                    document.getElementById('topScreen').innerHTML = `
+                        <div class="pixel-content">
+                            <div class="final-emoji" style="color: #666;">💔</div>
+                            <div class="final-title">TENTOU... 😅</div>
+                        </div>
+                    `;
+                    
+                    document.getElementById('bottomScreen').innerHTML = `
+                        <div class="final-container">
+                            <div class="final-text">
+                                Essa opção não funciona!<br><br>
+                                Só o "SIM, CELSO!"<br>
+                                está disponível! 😉
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            // ============ BOTÃO START ============
+            document.querySelector('.start').addEventListener('click', function() {
+                playSound('start');
+                this.classList.add('button-press');
+                
+                if (gameState === 'initial') {
+                    document.getElementById('bottomScreen').innerHTML = `
+                        <div class="pixel-content">
+                            <div style="font-size: 8px; color: #00E676; margin-bottom: 8px;">INICIANDO...</div>
+                            <div style="font-size: 20px; animation: spin 1s linear infinite;">⚭</div>
+                        </div>
+                    `;
+                    
+                    setTimeout(() => {
+                        this.classList.remove('button-press');
+                        showProfessorCarvalho();
+                    }, 800);
+                } else if (gameState === 'proposal-ready') {
+                    this.classList.remove('button-press');
+                    showRingProposal();
+                }
+            });
+            
+            // ============ OUTROS BOTÕES ============
+            document.querySelectorAll('.lr-btn, .abxy-btn:not(.a-btn), .menu-btn:not(.start), .dpad-arrow, .dpad-center').forEach(btn => {
+                btn.addEventListener('mousedown', function() {
+                    playSound('button');
+                    if (!this.classList.contains('dpad-arrow')) {
+                        this.classList.add('button-press');
+                    } else {
+                        this.style.color = '#FFF';
+                        this.style.background = 'rgba(255,255,255,0.3)';
+                    }
+                });
+                
+                btn.addEventListener('mouseup', function() {
+                    if (!this.classList.contains('dpad-arrow')) {
+                        this.classList.remove('button-press');
+                    } else {
+                        this.style.color = '#DDD';
+                        this.style.background = 'rgba(0,0,0,0.3)';
+                    }
+                });
+            });
+            
+            // ============ CONFITTI ============
+            function createConfetti() {
+                for (let i = 0; i < 25; i++) {
+                    setTimeout(() => {
+                        const confetti = document.createElement('div');
+                        confetti.style.position = 'absolute';
+                        confetti.style.width = '6px';
+                        confetti.style.height = '6px';
+                        confetti.style.background = ['#FF4081', '#4FC3F7', '#FFD700', '#00E676', '#FF9800'][Math.floor(Math.random() * 5)];
+                        confetti.style.borderRadius = '50%';
+                        confetti.style.left = Math.random() * 100 + '%';
+                        confetti.style.top = '-10px';
+                        confetti.style.animation = `fall ${Math.random() * 2 + 1}s linear forwards`;
+                        confetti.style.zIndex = '1000';
+                        
+                        const style = document.createElement('style');
+                        style.textContent = `
+                            @keyframes fall {
+                                to {
+                                    transform: translateY(400px) rotate(${Math.random() * 360}deg);
+                                    opacity: 0;
+                                }
+                            }
+                        `;
+                        document.head.appendChild(style);
+                        
+                        document.querySelector('.ds-container').appendChild(confetti);
+                        
+                        setTimeout(() => confetti.remove(), 3000);
+                    }, i * 80);
+                }
+            }
+            
+            // ============ INICIALIZAR SONS ============
+            function enableSounds() {
+                if (!soundsEnabled) {
+                    initAudio();
+                    soundsEnabled = true;
+                    musicEnabled = true;
+                }
+            }
+            
+            document.addEventListener('click', enableSounds, { once: true });
+            
+            // Adicionar animação spin
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            console.log('🎮 Sistema Pokémon Pronto!');
+            console.log('📸 Imagens com fundo transparente configuradas!');
+            console.log('🎵 Música rápida implementada!');
+        });
+    </script>
+</body>
+</html>
